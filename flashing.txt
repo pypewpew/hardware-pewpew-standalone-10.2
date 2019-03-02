@@ -1,0 +1,94 @@
+You will need a SWD-capable programmer, such as J-Link.
+There is a connection header on the bottom of the board, labeled this way:
+
+R - - 1 2 3 4 5 6 7 + +3V
+
+The programmer has to be connected in the following way:
+R: RST
+-: GND
+1: SWCLK
+2: SWDIO
++: VCC
+
+In addition, the board needs to have 3-3.3V power provided to the +/- pins:
+
+-: GND
++: 3.3V
+
+Once the programmer and the power are connected, you can flash the bootloader
+with Atmel Studio or using JLinkExe:
+
+$ JLinkExe
+SEGGER J-Link Commander V6.20f (Compiled Oct 13 2017 17:18:59)
+DLL version V6.20f, compiled Oct 13 2017 17:18:54
+
+Connecting to J-Link via USB...O.K.
+Firmware: J-Link V10 compiled Oct  6 2017 16:37:55
+Hardware version: V10.10
+S/N: 50112638
+License(s): GDB
+VTref = 2.993V
+
+
+Type "connect" to establish a target connection, '?' for help
+J-Link>connect
+Please specify device / core. <Default>: ATSAMD21G18
+Type '?' for selection dialog
+Device>ATSAMD21G18
+Please specify target interface:
+  J) JTAG (Default)
+  S) SWD
+TIF>S
+Specify target interface speed [kHz]. <Default>: 4000 kHz
+Speed>
+Device "ATSAMD21G18" selected.
+
+
+Connecting to target via SWD
+InitTarget()
+Found SW-DP with ID 0x0BC11477
+Scanning AP map to find all available APs
+AP[1]: Stopped AP scan as end of AP map has been reached
+AP[0]: AHB-AP (IDR: 0x04770031)
+Iterating through AP map to find AHB-AP to use
+AP[0]: Core found
+AP[0]: AHB-AP ROM base: 0x41003000
+CPUID register: 0x410CC601. Implementer code: 0x41 (ARM)
+Found Cortex-M0 r0p1, Little endian.
+FPUnit: 4 code (BP) slots and 0 literal slots
+CoreSight components:
+ROMTbl[0] @ 41003000
+ROMTbl[0][0]: E00FF000, CID: B105100D, PID: 000BB4C0 ROM Table
+ROMTbl[1] @ E00FF000
+ROMTbl[1][0]: E000E000, CID: B105E00D, PID: 000BB008 SCS
+ROMTbl[1][1]: E0001000, CID: B105E00D, PID: 000BB00A DWT
+ROMTbl[1][2]: E0002000, CID: B105E00D, PID: 000BB00B FPB
+ROMTbl[0][1]: 41006000, CID: B105900D, PID: 001BB932 MTB-M0+
+Cortex-M0 identified.
+J-Link>erase
+Erasing device (ATSAMD21G18)...
+Comparing flash   [100%] Done.
+Erasing flash     [100%] Done.
+Verifying flash   [100%] Done.
+J-Link: Flash download: Total time needed: 0.862s (Prepare: 0.017s, Compare: 0.000s, Erase: 0.843s, Program: 0.000s, Verify: 0.000s, Restore: 0.002s)
+Erasing flash     [100%] Done.
+Verifying flash   [100%] Done.
+J-Link: Flash download: Total time needed: 0.018s (Prepare: 0.015s, Compare: 0.000s, Erase: 0.000s, Program: 0.000s, Verify: 0.000s, Restore: 0.002s)
+Erasing done.
+J-Link>loadbin bootloader.bin 0
+Downloading file [bootloader.bin]...
+Comparing flash   [100%] Done.
+Erasing flash     [100%] Done.
+Programming flash [100%] Done.
+Verifying flash   [100%] Done.
+J-Link: Flash download: Bank 0 @ 0x00000000: 1 range affected (8192 bytes)
+J-Link: Flash download: Total time needed: 0.088s (Prepare: 0.025s, Compare: 0.003s, Erase: 0.000s, Program: 0.046s, Verify: 0.000s, Restore: 0.012s)
+O.K.
+J-Link>qc
+
+
+Once the bootloader is flashed, connect a USB cable to the device, it should
+come up as a TRINKETBOOT disk drive. Copy the bundle.uf2 file onto that drive,
+and the device should restart and come up as a CIRCUITPY drive, with main.py,
+snake.py, tetris.py and boot_out.txt files on it. That means the flashing was
+successful.
